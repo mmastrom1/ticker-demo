@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Dynamic Ticker</title>
+  <title>GViz Ticker</title>
   <style>
     body { font-family: Arial, sans-serif; }
     .ticker-wrap {
@@ -18,42 +18,47 @@
       display: inline-block;
       white-space: nowrap;
       padding-left: 100%;
-      animation: ticker 60s linear infinite;
-      hover: animation-play-state: paused;
+      animation: ticker 30s linear infinite; /* slower speed */
     }
     @keyframes ticker {
       0%   { transform: translateX(0); }
       100% { transform: translateX(-100%); }
     }
- <script>
-  async function loadNames() {
-    const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT53HrZz3RG6r4x7c0HOVlfMHygdSuTqnWp5n7gOAqal5yZcyEdFKW7eNJ9dpHjkTc5FVyRRkqlQXNW/pub?output=tsv";
-    const url = "https://api.allorigins.win/raw?url=" + encodeURIComponent(sheetUrl);
-
-    try {
-      const response = await fetch(url);
-      if (!response.ok) throw new Error("Network response was not ok");
-      const text = await response.text();
-
-      // Parse only the first column (names), skip header
-      const rows = text.split("\n")
-  .map(r => r.split("\t")[0].trim())
-  .filter(r => r && r.toLowerCase() !== "name");
-
-
-      document.getElementById("ticker").textContent = rows.join(" • ");
-    } catch (err) {
-      document.getElementById("ticker").textContent = "Error loading names: " + err.message;
-      console.error("Fetch error", err);
+    .ticker:hover {
+      animation-play-state: paused; /* pause on hover */
     }
-  }
+  </style>
+</head>
+<body>
+  <div class="ticker-wrap">
+    <div id="ticker" class="ticker">Loading names...</div>
+  </div>
 
-  loadNames();
-  setInterval(loadNames, 300000); // refresh every 5 minutes
-</script>
+  <script>
+    async function loadNames() {
+      // Your Sheet ID
+      const sheetId = "1WJZYU6xKI_rrlmJdFf3S4wnnI2vcMqaw40mAmH0A7y4";
+      const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv`;
 
+      try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error("Network response was not ok");
+        const text = await response.text();
+
+        // Parse only the first column (names), skip header
+        const rows = text.split("\n")
+          .map(r => r.split(",")[0].trim())
+          .filter(r => r && r.toLowerCase() !== "name");
+
+        document.getElementById("ticker").textContent = rows.join(" • ");
+      } catch (err) {
+        document.getElementById("ticker").textContent = "Error loading names: " + err.message;
+        console.error("Fetch error", err);
+      }
+    }
+
+    loadNames();
+    setInterval(loadNames, 300000); // refresh every 5 minutes
+  </script>
 </body>
 </html>
-
-
-
