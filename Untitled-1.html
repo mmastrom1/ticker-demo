@@ -27,7 +27,7 @@
     }
  <script>
   async function loadNames() {
-    const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT53HRzZ3RG6r4x7c0HOVlfMHygdSuTqnWp5n7gOAgaI5yZcyEdFKW7eNJ9dpHjKtC5FVyRRkqlQXNW/pub?output=csv";
+    const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT53HrZz3RG6r4x7c0HOVlfMHygdSuTqnWp5n7gOAqal5yZcyEdFKW7eNJ9dpHjkTc5FVyRRkqlQXNW/pub?output=tsv";
     const url = "https://api.allorigins.win/raw?url=" + encodeURIComponent(sheetUrl);
 
     try {
@@ -37,8 +37,9 @@
 
       // Parse only the first column (names), skip header
       const rows = text.split("\n")
-        .map(r => r.split(",")[0].trim())
-        .filter(r => r && r.toLowerCase() !== "name");
+  .map(r => r.split("\t")[0].trim())
+  .filter(r => r && r.toLowerCase() !== "name");
+
 
       document.getElementById("ticker").textContent = rows.join(" • ");
     } catch (err) {
@@ -53,5 +54,6 @@
 
 </body>
 </html>
+
 
 
